@@ -8,26 +8,7 @@ import { Brag } from '../models/brag.model';
 export class BragService {
   private readonly http = inject(HttpClient);
 
-  readonly brags = signal<Brag[]>([
-    {
-      id: 'brag-1',
-      title: 'Arquitetura de Agentes GenAI e Pipelines RAG',
-      context: 'Liderança na implementação da arquitetura base de Inteligência Artificial para automação de análise de software e síntese de relatórios de entregas.',
-      impact: 'Redução de 65% no tempo de documentação técnica dos projetos e melhoria significativa na consistência dos artefatos gerados.',
-      metrics: '65% menos tempo de elaboração, 99.4% precisão técnica em testes comparativos.',
-      technologies: ['Angular 21', 'TypeScript', 'Genkit AI', 'Angular Signals', 'Tailwind CSS'],
-      createdAt: new Date('2026-07-24T14:30:00')
-    },
-    {
-      id: 'brag-2',
-      title: 'Otimização de Performance e Hydration Zoneless',
-      context: 'Migração do ecossistema de renderização para Angular Zoneless e otimização dos tempos de resposta do servidor (SSR).',
-      impact: 'Aumento expressivo nas pontuações de Core Web Vitals (LCP e INP) e redução do bundle JS final transferido ao cliente.',
-      metrics: 'LCP reduzido para 0.8s, Score Lighthouse 98+ em Performance.',
-      technologies: ['Angular 21', 'Zoneless', 'SSR', 'Tailwind CSS', 'Vite/PostCSS'],
-      createdAt: new Date('2026-07-25T09:15:00')
-    }
-  ]);
+  readonly brags = signal<Brag[]>([]);
 
   readonly loading = signal<boolean>(false);
 
