@@ -14,9 +14,6 @@ export const ai = genkit({
     }),
   ],
   model: googleAI.model('gemini-flash-latest'),
-  config: {
-    temperature: 0.8,
-  },
 });
 
 /**

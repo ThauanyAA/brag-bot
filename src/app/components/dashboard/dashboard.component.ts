@@ -172,7 +172,7 @@ export class DashboardComponent {
     const promptValue = this.rawPrompt();
 
     if (promptValue.trim()) {
-      this.bragService.generateMockBrag(promptValue);
+      this.bragService.generateBrag(promptValue);
       this.rawPrompt.set('');
     }
   }

@@ -1,10 +1,13 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Brag } from '../models/brag.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class BragService {
+  private readonly http = inject(HttpClient);
+
   readonly brags = signal<Brag[]>([
     {
       id: 'brag-1',
@@ -29,44 +32,40 @@ export class BragService {
   readonly loading = signal<boolean>(false);
 
   /**
-   * Simula chamada de rede de 1.5s, ativa o loading e adiciona um objeto JSON mockado à lista de brags.
+   * Envia o rascunho do usuário para o backend (/api/brag) e adiciona o resultado à lista de brags.
    */
-  generateMockBrag(prompt: string): void {
-    if (!prompt.trim() || this.loading()) {
+  generateBrag(definition: string): void {
+    if (!definition.trim() || this.loading()) {
       return;
     }
 
     this.loading.set(true);
 
-    setTimeout(() => {
-      const id = `brag-${Date.now()}`;
-      
-      // Criação de conquista mockada estática com base no prompt recebido
-      const newBrag: Brag = {
-        id,
-        title: this.extractTitleFromPrompt(prompt),
-        context: `Desenvolvimento e execução referente a: "${prompt.trim()}". Atuação proativa na definição de arquitetura e entrega com altíssimo padrão técnico.`,
-        impact: 'Automação completa do fluxo com aumento de produtividade da equipe, reduzindo retrabalhos manuais e garantindo altíssima qualidade visual e técnica.',
-        metrics: '95% de satisfação dos usuários e 40% de aceleração no ciclo de entrega.',
-        technologies: ['Angular 21', 'Tailwind CSS', 'Genkit AI', 'TypeScript', 'MCP'],
-        createdAt: new Date(),
-        rawPrompt: prompt
-      };
+    this.http.post<any>('/api/brag', { definition }).subscribe({
+      next: (res) => {
+        const newBrag: Brag = {
+          id: res.id || `brag-${Date.now()}`,
+          title: res.title,
+          context: res.context,
+          impact: res.businessImpact || res.impact || res.actionTaken || '',
+          metrics: Array.isArray(res.metrics) ? res.metrics.join(', ') : (res.metrics || ''),
+          technologies: res.technologiesUsed || res.technologies || [],
+          createdAt: new Date(),
+          rawPrompt: definition
+        };
 
-      this.brags.update(current => [newBrag, ...current]);
-      this.loading.set(false);
-    }, 1500);
+        this.brags.update(current => [newBrag, ...current]);
+        this.loading.set(false);
+      },
+      error: (err) => {
+        console.error('Erro ao gerar brag:', err);
+        this.loading.set(false);
+      }
+    });
   }
 
   getBragById(id: string): Brag | undefined {
     return this.brags().find(b => b.id === id);
   }
-
-  private extractTitleFromPrompt(prompt: string): string {
-    const cleanPrompt = prompt.trim();
-    if (cleanPrompt.length <= 40) {
-      return `Conquista: ${cleanPrompt}`;
-    }
-    return `Destilação: ${cleanPrompt.substring(0, 40)}...`;
-  }
 }
+
