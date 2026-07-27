@@ -3,6 +3,13 @@ import { googleAI } from '@genkit-ai/google-genai';
 import { startFlowServer } from '@genkit-ai/express';
 import { v4 as uuidv4 } from 'uuid';
 
+// Carrega variáveis do arquivo .env caso não estejam no ambiente
+try {
+  process.loadEnvFile();
+} catch {
+  // Ignora caso o arquivo .env não exista (ex.: em produção com env vars injetadas)
+}
+
 /**
  * Inicialização da instância do Genkit com o plugin Google AI
  * Configurado com modelo padrão 'gemini-flash-latest' e temperatura 0.8

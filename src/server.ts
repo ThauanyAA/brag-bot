@@ -1,3 +1,9 @@
+try {
+  process.loadEnvFile();
+} catch {
+  // Ignora se o arquivo .env não existir
+}
+
 import {
   AngularNodeAppEngine,
   createNodeRequestHandler,
